@@ -30,12 +30,8 @@ class _OverlayAudioPlayerState extends State<OverlayAudioPlayer> {
   late StreamSubscription<Duration?> positionSubscription;
   late StreamSubscription<PlayerState> playerStateSubscription;
 
-  // late StreamSubscription<Duration?> bufferedSubscription;
-
   Duration? _duration;
   Duration? _position;
-
-  // Duration? _bufferedPosition;
 
   bool isInitialised = false;
 
@@ -55,42 +51,46 @@ class _OverlayAudioPlayerState extends State<OverlayAudioPlayer> {
   }
 
   void _initAudioPlayer() async {
-    String audioURL = await FirebaseStorage.instance
-        .ref()
-        .child(widget.audioFirebaseStoragePath)
-        .getDownloadURL();
-
-    await audioPlayer.setUrl(audioURL);
-    durationSubscription = audioPlayer.durationStream.listen((duration) {
-      setState(() {
-        _duration = duration;
-      });
-    });
-
-    positionSubscription = audioPlayer.positionStream.listen((position) {
-      setState(() {
-        _position = position;
-      });
-    });
-
-    playerStateSubscription =
-        audioPlayer.playerStateStream.listen((state) async {
-      if (state.processingState == ProcessingState.completed) {
-        await audioPlayer.seek(Duration.zero);
-        await audioPlayer.pause();
+    try {
+      String audioURL;
+      if (widget.audioFirebaseStoragePath.startsWith('http://') ||
+          widget.audioFirebaseStoragePath.startsWith('https://')) {
+        audioURL = widget.audioFirebaseStoragePath;
       }
-    });
+      else {
+        audioURL = await FirebaseStorage.instance
+            .ref()
+            .child(widget.audioFirebaseStoragePath)
+            .getDownloadURL();
+      }
 
-    // bufferedSubscription =
-    //     audioPlayer.bufferedPositionStream.listen((bufferedPosition) {
-    //   setState(() {
-    //     _bufferedPosition = bufferedPosition;
-    //   });
-    // });
+      await audioPlayer.setUrl(audioURL);
+      durationSubscription = audioPlayer.durationStream.listen((duration) {
+        setState(() {
+          _duration = duration;
+        });
+      });
 
-    setState(() {
-      isInitialised = true;
-    });
+      positionSubscription = audioPlayer.positionStream.listen((position) {
+        setState(() {
+          _position = position;
+        });
+      });
+
+      playerStateSubscription =
+          audioPlayer.playerStateStream.listen((state) async {
+        if (state.processingState == ProcessingState.completed) {
+          await audioPlayer.seek(Duration.zero);
+          await audioPlayer.pause();
+        }
+      });
+
+      setState(() {
+        isInitialised = true;
+      });
+    } catch (e) {
+      log("Error initialising audio player for link: ${widget.audioFirebaseStoragePath}.\n Error: $e");
+    }
   }
 
   @override

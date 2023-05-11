@@ -188,29 +188,33 @@ class EditorJSViewState extends State<EditorJSView> {
                 break;
               case "audio":
                 if (element.data != null) {
-                  if (element.data!.audioPath != null) {
-                    if (element.data!.audioTitle != null) {
-                      items.add(
-                        OverlayAudioPlayer(
-                          audioFirebaseStoragePath: element.data!.audioPath!,
-                          audioTitle: element.data!.audioTitle!,
-                          pauseOtherAudioPlayers: pauseOtherAudioPlayers,
-                        ),
-                      );
+                  if (element.data!.file != null) {
+                    if (element.data!.file!.url != null) {
+                      if (element.data!.title != null) {
+                        items.add(
+                          OverlayAudioPlayer(
+                            audioFirebaseStoragePath: element.data!.file!.url!,
+                            audioTitle: element.data!.title!,
+                            pauseOtherAudioPlayers: pauseOtherAudioPlayers,
+                          ),
+                        );
+                      }
                     }
                   }
                 }
                 break;
               case "video":
                 if (element.data != null) {
-                  if (element.data!.videoPath != null) {
-                    if (element.data!.videoTitle != null) {
-                      items.add(
-                        OverlayVideoPlayer(
-                          videoFirebaseStoragePath: element.data!.videoPath!,
-                          videoTitle: element.data!.videoTitle!,
-                        ),
-                      );
+                  if (element.data!.file != null) {
+                    if (element.data!.file!.url != null) {
+                      if (element.data!.title != null) {
+                        items.add(
+                          OverlayVideoPlayer(
+                            videoFirebaseStoragePath: element.data!.file!.url!,
+                            videoTitle: element.data!.title!,
+                          ),
+                        );
+                      }
                     }
                   }
                 }

@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:editorjs_flutter/src/model/EditorJSBlockFile.dart';
 
 class EditorJSBlockData {
@@ -13,10 +15,7 @@ class EditorJSBlockData {
   final String? buttonType;
   final String? buttonText;
   final String? buttonAction;
-  final String? audioPath;
-  final String? audioTitle;
-  final String? videoPath;
-  final String? videoTitle;
+  final String? title;
 
   EditorJSBlockData({
     this.text,
@@ -31,10 +30,7 @@ class EditorJSBlockData {
     this.buttonType,
     this.buttonText,
     this.buttonAction,
-    this.audioPath,
-    this.audioTitle,
-    this.videoPath,
-    this.videoTitle,
+    this.title,
   });
 
   factory EditorJSBlockData.fromJson(Map<String, dynamic> parsedJson) {
@@ -61,10 +57,7 @@ class EditorJSBlockData {
       buttonType: parsedJson['buttonType'],
       buttonText: parsedJson['buttonText'],
       buttonAction: parsedJson['buttonAction'],
-      audioPath: parsedJson['audioPath'],
-      audioTitle: parsedJson['audioTitle'],
-      videoPath: parsedJson['videoPath'],
-      videoTitle: parsedJson['videoTitle']
+      title: parsedJson['title'],
     );
   }
 }

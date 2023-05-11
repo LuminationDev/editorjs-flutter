@@ -1,3 +1,5 @@
+import 'dart:developer';
+
 import 'package:chewie/chewie.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -41,24 +43,35 @@ class _OverlayVideoPlayerState extends State<OverlayVideoPlayer> {
   }
 
   void _initVideoPlayer() async {
-    String videoURL = await FirebaseStorage.instance
-        .ref()
-        .child(widget.videoFirebaseStoragePath)
-        .getDownloadURL();
+    try {
+      String videoURL;
+      if (widget.videoFirebaseStoragePath.startsWith('http://') ||
+          widget.videoFirebaseStoragePath.startsWith('https://')) {
+        videoURL = widget.videoFirebaseStoragePath;
+      }
+      else {
+        videoURL = await FirebaseStorage.instance
+            .ref()
+            .child(widget.videoFirebaseStoragePath)
+            .getDownloadURL();
+      }
 
-    _videoController = VideoPlayerController.network(videoURL);
+      _videoController = VideoPlayerController.network(videoURL);
 
-    await _videoController.initialize();
+      await _videoController.initialize();
 
-    _chewieVideoController = ChewieController(
-      videoPlayerController: _videoController,
-      customControls: const OverlayVideoControls(),
-      autoPlay: false,
-      looping: false,
-    );
-    setState(() {
-      isInitialised = true;
-    });
+      _chewieVideoController = ChewieController(
+        videoPlayerController: _videoController,
+        customControls: const OverlayVideoControls(),
+        autoPlay: false,
+        looping: false,
+      );
+      setState(() {
+        isInitialised = true;
+      });
+    } catch (e) {
+      log("Error initialising video player for link: ${widget.videoFirebaseStoragePath}.\n Error: $e");
+    }
   }
 
   @override
