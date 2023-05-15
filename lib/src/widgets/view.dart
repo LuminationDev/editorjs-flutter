@@ -72,11 +72,9 @@ class EditorJSViewState extends State<EditorJSView> {
 
         customStyleMap = generateStylemap(styles.cssTags!);
 
-        log("Here is the dataObject blocks: ${dataObject.blocks?.length}");
         dataObject.blocks!.forEach(
           (element) {
             double levelFontSize = 16;
-
             switch (element.data!.level) {
               case 1:
                 levelFontSize = 32;
@@ -100,20 +98,43 @@ class EditorJSViewState extends State<EditorJSView> {
 
             switch (element.type) {
               case "header":
-                items.add(Row(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Expanded(
-                        child: Text(
-                          element.data!.text!,
-                          style: TextStyle(
-                              fontSize: levelFontSize,
-                              fontWeight: (element.data!.level! <= 3)
-                                  ? FontWeight.bold
-                                  : FontWeight.normal),
-                        ),
-                      )
-                    ]));
+                if (element.data != null) {
+                  if (element.data!.text != null) {
+                    if (element.data!.text!.isNotEmpty) {
+                      if (element.data!.level != null) {
+                        if (element.data!.level! >= 1 &&
+                            element.data!.level! <= 6) {
+                          switch (element.data!.level) {
+                            case 1:
+                              items.add(Html(
+                                  data: "<h1>${element.data!.text!}</h1>"));
+                              break;
+                            case 2:
+                              items.add(Html(
+                                  data: "<h2>${element.data!.text!}</h2>"));
+                              break;
+                            case 3:
+                              items.add(Html(
+                                  data: "<h3>${element.data!.text!}</h3>"));
+                              break;
+                            case 4:
+                              items.add(Html(
+                                  data: "<h4>${element.data!.text!}</h4>"));
+                              break;
+                            case 5:
+                              items.add(Html(
+                                  data: "<h5>${element.data!.text!}</h5>"));
+                              break;
+                            case 6:
+                              items.add(Html(
+                                  data: "<h6>${element.data!.text!}</h6>"));
+                              break;
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
                 break;
               case "paragraph":
                 items.add(Html(
