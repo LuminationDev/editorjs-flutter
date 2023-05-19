@@ -44,20 +44,20 @@ class EditorJSBlockData {
     }
 
     return EditorJSBlockData(
-      text: parsedJson['text'],
-      level: parsedJson['level'],
-      style: parsedJson['style'],
-      items: itemsList,
-      file: (parsedJson['file'] != null)
-          ? EditorJSBlockFile.fromJson(parsedJson['file'])
+      text: parsedJson['text'] is String ? parsedJson['text'] : null,
+      level: parsedJson['level'] is int ? parsedJson['level'] : null,
+      style: parsedJson['style'] is String ? parsedJson['style'] : null,
+      items: itemsList.isNotEmpty ? itemsList : null,
+      file: (parsedJson['file'] is Map<String, dynamic>)
+          ? EditorJSBlockFile.fromJson(parsedJson['file'] as Map<String, dynamic>)
           : null,
-      caption: parsedJson['caption'],
-      withBorder: parsedJson['withBorder'],
-      withBackground: parsedJson['withBackground'],
-      buttonType: parsedJson['buttonType'],
-      buttonText: parsedJson['buttonText'],
-      buttonAction: parsedJson['buttonAction'],
-      title: parsedJson['title'],
+      caption: parsedJson['caption'] is String ? parsedJson['caption'] : null,
+      withBorder: parsedJson['withBorder'] is bool ? parsedJson['withBorder'] : null,
+      withBackground: parsedJson['withBackground'] is bool ? parsedJson['withBackground'] : null,
+      buttonType: parsedJson['buttonType'] is String ? parsedJson['buttonType'] : null,
+      buttonText: parsedJson['buttonText'] is String ? parsedJson['buttonText'] : null,
+      buttonAction: parsedJson['buttonAction'] is String ? parsedJson['buttonAction'] : null,
+      title: parsedJson['title'] is String ? parsedJson['title'] : null,
     );
   }
 }
