@@ -24,8 +24,8 @@ class OverlayVideoPlayer extends StatefulWidget {
 }
 
 class _OverlayVideoPlayerState extends State<OverlayVideoPlayer> {
-  late final VideoPlayerController _videoController;
-  late final ChewieController _chewieVideoController;
+  VideoPlayerController? _videoController;
+  ChewieController? _chewieVideoController;
 
   bool isInitialised = false;
 
@@ -37,8 +37,8 @@ class _OverlayVideoPlayerState extends State<OverlayVideoPlayer> {
 
   @override
   void dispose() {
-    _videoController.dispose();
-    _chewieVideoController.dispose();
+    _videoController?.dispose();
+    _chewieVideoController?.dispose();
     super.dispose();
   }
 
@@ -58,10 +58,10 @@ class _OverlayVideoPlayerState extends State<OverlayVideoPlayer> {
 
       _videoController = VideoPlayerController.network(videoURL);
 
-      await _videoController.initialize();
+      await _videoController?.initialize();
 
       _chewieVideoController = ChewieController(
-        videoPlayerController: _videoController,
+        videoPlayerController: _videoController!,
         customControls: const OverlayVideoControls(),
         autoPlay: false,
         looping: false,
@@ -91,8 +91,8 @@ class _OverlayVideoPlayerState extends State<OverlayVideoPlayer> {
         const SizedBox(height: 10.0),
         (isInitialised)
             ? AspectRatio(
-                aspectRatio: _videoController.value.aspectRatio,
-                child: Chewie(controller: _chewieVideoController))
+                aspectRatio: _videoController!.value.aspectRatio,
+                child: Chewie(controller: _chewieVideoController!))
             : const Center(
                 child: CircularProgressIndicator(
                     color: AppColors.overlayDarkOrange),

@@ -26,9 +26,9 @@ class OverlayAudioPlayer extends StatefulWidget {
 
 class _OverlayAudioPlayerState extends State<OverlayAudioPlayer> {
   AudioPlayer audioPlayer = AudioPlayer();
-  late StreamSubscription<Duration?> durationSubscription;
-  late StreamSubscription<Duration?> positionSubscription;
-  late StreamSubscription<PlayerState> playerStateSubscription;
+  StreamSubscription<Duration?>? durationSubscription;
+  StreamSubscription<Duration?>? positionSubscription;
+  StreamSubscription<PlayerState>? playerStateSubscription;
 
   Duration? _duration;
   Duration? _position;
@@ -43,9 +43,9 @@ class _OverlayAudioPlayerState extends State<OverlayAudioPlayer> {
 
   @override
   void dispose() {
-    durationSubscription.cancel();
-    positionSubscription.cancel();
-    playerStateSubscription.cancel();
+    durationSubscription?.cancel();
+    positionSubscription?.cancel();
+    playerStateSubscription?.cancel();
     audioPlayer.dispose();
     super.dispose();
   }
