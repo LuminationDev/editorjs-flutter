@@ -84,7 +84,7 @@ class _OverlayVideoPlayerState extends State<OverlayVideoPlayer> {
             const SizedBox(width: 10.0),
             Text(
               widget.videoTitle,
-              style: AppStyles.rubikBodyText,
+              style: AppFonts.Body,
             ),
           ],
         ),
