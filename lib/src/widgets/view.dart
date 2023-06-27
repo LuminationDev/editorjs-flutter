@@ -71,6 +71,7 @@ class EditorJSViewState extends State<EditorJSView> {
         styles = EditorJSViewStyles.fromJson(jsonDecode(widget.styles!));
 
         customStyleMap = generateStylemap(styles.cssTags!);
+        log("STYLES: "+customStyleMap.toString());
 
         dataObject.blocks!.forEach(
           (element) {
@@ -107,27 +108,27 @@ class EditorJSViewState extends State<EditorJSView> {
                           switch (element.data!.level) {
                             case 1:
                               items.add(Html(
-                                  data: "<h1>${element.data!.text!}</h1>"));
+                                  data: "<h1>${element.data!.text!}</h1>", style: customStyleMap,));
                               break;
                             case 2:
                               items.add(Html(
-                                  data: "<h2>${element.data!.text!}</h2>"));
+                                  data: "<h2>${element.data!.text!}</h2>", style: customStyleMap,));
                               break;
                             case 3:
                               items.add(Html(
-                                  data: "<h3>${element.data!.text!}</h3>"));
+                                  data: "<h3>${element.data!.text!}</h3>", style: customStyleMap,));
                               break;
                             case 4:
                               items.add(Html(
-                                  data: "<h4>${element.data!.text!}</h4>"));
+                                  data: "<h4>${element.data!.text!}</h4>", style: customStyleMap,));
                               break;
                             case 5:
                               items.add(Html(
-                                  data: "<h5>${element.data!.text!}</h5>"));
+                                  data: "<h5>${element.data!.text!}</h5>", style: customStyleMap,));
                               break;
                             case 6:
                               items.add(Html(
-                                  data: "<h6>${element.data!.text!}</h6>"));
+                                  data: "<h6>${element.data!.text!}</h6>", style: customStyleMap,));
                               break;
                           }
                         }

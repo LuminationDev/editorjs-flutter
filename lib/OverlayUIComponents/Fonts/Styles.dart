@@ -239,7 +239,6 @@ class AppFonts {
     fontWeight: FontWeight.w700,
     fontSize: 26.0,
     letterSpacing: 0.2,
-    height: 48.0,
   );
   static const TextStyle Heading2 = TextStyle(
     color: Colors.black,
@@ -247,7 +246,6 @@ class AppFonts {
     fontWeight: FontWeight.w600,
     fontSize: 18.0,
     letterSpacing: 0.2,
-    height: 26.0,
   );
   static const TextStyle Heading3 = TextStyle(
     color: Colors.black,
@@ -255,7 +253,6 @@ class AppFonts {
     fontWeight: FontWeight.w600,
     fontSize: 14.0,
     letterSpacing: 0.2,
-    height: 26.0,
   );
   static const TextStyle Body = TextStyle(
     color: Colors.black,
@@ -263,7 +260,6 @@ class AppFonts {
     fontWeight: FontWeight.w400,
     fontSize: 14.0,
     letterSpacing: 0,
-    height: 18.0,
   );
   static const TextStyle BulletedList = TextStyle(
     color: Colors.black,
@@ -271,7 +267,6 @@ class AppFonts {
     fontWeight: FontWeight.w400,
     fontSize: 14.0,
     letterSpacing: 0,
-    height: 18.0,
   );
   static const TextStyle NumberedList = TextStyle(
     color: Colors.black,
@@ -279,6 +274,5 @@ class AppFonts {
     fontWeight: FontWeight.w400,
     fontSize: 14.0,
     letterSpacing: 0,
-    height: 18.0,
   );
 }
