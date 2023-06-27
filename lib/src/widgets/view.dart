@@ -139,7 +139,7 @@ class EditorJSViewState extends State<EditorJSView> {
                 break;
               case "paragraph":
                 items.add(Html(
-                  data: element.data!.text,
+                  data: "<p>${element.data!.text}</p>",
                   style: customStyleMap,
                 ));
                 break;
