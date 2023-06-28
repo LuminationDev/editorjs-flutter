@@ -11,6 +11,7 @@ import 'package:flutter_html/flutter_html.dart';
 import 'dart:developer';
 
 import 'package:editorjs_flutter/OverlayUIComponents/orange_button.dart';
+import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../OverlayUIComponents/VideoPlayer/video_player.dart';
@@ -107,8 +108,8 @@ class EditorJSViewState extends State<EditorJSView> {
                             element.data!.level! <= 6) {
                           switch (element.data!.level) {
                             case 1:
-                              items.add(Html(
-                                data: "<h1>${element.data!.text!}</h1>",
+                              items.add(Text(
+                                "<h1>${element.data!.text!}</h1>",
                                 style: customStyleMap,));
                               break;
                             case 2:
@@ -280,7 +281,27 @@ class EditorJSViewState extends State<EditorJSView> {
                     (element.color != null) ? getColor(element.color!) : null,
                 padding: (element.padding != null)
                     ? EdgeInsets.all(element.padding!)
-                    : null));
+                    : null)
+        );
+      },
+    );
+
+    return map;
+  }
+  Map<String, TextStyle> generateTextStylemap(List<EditorJSCSSTag> styles){
+    Map<String, TextStyle> map = <String, TextStyle>{};
+    styles.forEach(
+          (element) {
+        map.putIfAbsent(
+            element.tag.toString(),
+                () =>  GoogleFonts.getFont(element.fontFamily ?? "Rubik",
+                backgroundColor: (element.backgroundColor != null)
+                    ? getColor(element.backgroundColor!)
+                    : null,
+                color:
+                (element.color != null) ? getColor(element.color!) : null,
+                )
+        );
       },
     );
 
