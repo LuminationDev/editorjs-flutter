@@ -108,27 +108,33 @@ class EditorJSViewState extends State<EditorJSView> {
                           switch (element.data!.level) {
                             case 1:
                               items.add(Html(
-                                  data: "<h1>${element.data!.text!}</h1>", style: customStyleMap,));
+                                data: "<h1>${element.data!.text!}</h1>",
+                                style: customStyleMap,));
                               break;
                             case 2:
                               items.add(Html(
-                                  data: "<h2>${element.data!.text!}</h2>", style: customStyleMap,));
+                                data: "<h2>${element.data!.text!}</h2>",
+                                style: customStyleMap,));
                               break;
                             case 3:
                               items.add(Html(
-                                  data: "<h3>${element.data!.text!}</h3>", style: customStyleMap,));
+                                data: "<h3>${element.data!.text!}</h3>",
+                                style: customStyleMap,));
                               break;
                             case 4:
                               items.add(Html(
-                                  data: "<h4>${element.data!.text!}</h4>", style: customStyleMap,));
+                                data: "<h4>${element.data!.text!}</h4>",
+                                style: customStyleMap,));
                               break;
                             case 5:
                               items.add(Html(
-                                  data: "<h5>${element.data!.text!}</h5>", style: customStyleMap,));
+                                data: "<h5>${element.data!.text!}</h5>",
+                                style: customStyleMap,));
                               break;
                             case 6:
                               items.add(Html(
-                                  data: "<h6>${element.data!.text!}</h6>", style: customStyleMap,));
+                                data: "<h6>${element.data!.text!}</h6>",
+                                style: customStyleMap,));
                               break;
                           }
                         }
@@ -147,39 +153,47 @@ class EditorJSViewState extends State<EditorJSView> {
                 String bullet = "\u2022 ";
                 String? style = element.data!.style;
                 int counter = 1;
-
-                element.data!.items!.forEach(
-                  (element) {
-                    if (style == 'ordered') {
-                      bullet = counter.toString();
-                      items.add(
-                        Row(children: [
-                          Expanded(
-                            child: Container(
-                                child: Html(
-                              data: "<li>$bullet. $element</li>",
-                              style: customStyleMap,
-                            )),
-                          )
-                        ]),
-                      );
-                      counter++;
-                    } else {
-                      items.add(
-                        Row(
-                          children: <Widget>[
-                            Expanded(
-                                child: Container(
-                              child: Html(
-                                  data: "<li>$bullet$element</li>",
-                                  style: customStyleMap),
-                            ))
-                          ],
-                        ),
-                      );
-                    }
-                  },
-                );
+                String listString = "";
+                element.data!.items!.forEach((element) {
+                  listString += "<li>$element</li>";
+                });
+                if (style == 'ordered'){
+                  items.add(Html(data: "<ol>$listString</ol>", style: customStyleMap,));
+                }else{
+                  items.add(Html(data: "<ul>$listString</ul>", style: customStyleMap,));
+                }
+                // element.data!.items!.forEach(
+                //   (element) {
+                //     if (style == 'ordered') {
+                //       bullet = counter.toString();
+                //       items.add(
+                //         Row(children: [
+                //           Expanded(
+                //             child: Container(
+                //                 child: Html(
+                //               data: "<li>$bullet. $element</li>",
+                //               style: customStyleMap,
+                //             )),
+                //           )
+                //         ]),
+                //       );
+                //       counter++;
+                //     } else {
+                //       items.add(
+                //         Row(
+                //           children: <Widget>[
+                //             Expanded(
+                //                 child: Container(
+                //               child: Html(
+                //                   data: "<li>$bullet$element</li>",
+                //                   style: customStyleMap),
+                //             ))
+                //           ],
+                //         ),
+                //       );
+                //     }
+                //   },
+                // );
                 break;
               case "delimiter":
                 items.add(Row(
