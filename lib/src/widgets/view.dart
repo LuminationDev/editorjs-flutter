@@ -1,7 +1,9 @@
 import 'dart:convert';
+import 'dart:ffi';
 
 import 'package:editorjs_flutter/OverlayUIComponents/AudioPlayer/audio_player.dart';
 import 'package:editorjs_flutter/src/model/EditorJSBlockData.dart';
+import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:editorjs_flutter/src/model/EditorJSData.dart';
 import 'package:editorjs_flutter/src/model/EditorJSViewStyles.dart';
@@ -13,6 +15,10 @@ import 'dart:developer';
 import 'package:editorjs_flutter/OverlayUIComponents/orange_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:html/parser.dart' as htmlParser;
+import 'package:html/dom.dart' as dom;
+import 'package:url_launcher/url_launcher.dart';
+
 
 import '../../OverlayUIComponents/VideoPlayer/video_player.dart';
 
@@ -44,6 +50,7 @@ class EditorJSViewState extends State<EditorJSView> {
   late EditorJSViewStyles styles;
   final List<Widget> items = <Widget>[];
   late Map<String, Style> customStyleMap;
+  late Map<String, TextStyle> customTextStyleMap;
 
   AudioPlayer? _currentlyPlayingAudioPlayer;
   bool _isSomethingPlaying = false;
@@ -72,7 +79,10 @@ class EditorJSViewState extends State<EditorJSView> {
         styles = EditorJSViewStyles.fromJson(jsonDecode(widget.styles!));
 
         customStyleMap = generateStylemap(styles.cssTags!);
-        log("STYLES: "+customStyleMap.toString());
+        customTextStyleMap = generateTextStylemap(styles.cssTags!);
+
+        log("STYLES: " + customStyleMap.toString());
+        log("TEXTSTYLES: " + customTextStyleMap.toString());
 
         dataObject.blocks!.forEach(
           (element) {
@@ -106,38 +116,14 @@ class EditorJSViewState extends State<EditorJSView> {
                       if (element.data!.level != null) {
                         if (element.data!.level! >= 1 &&
                             element.data!.level! <= 6) {
-                          switch (element.data!.level) {
-                            case 1:
-                              items.add(Text(
-                                "<h1>${element.data!.text!}</h1>",
-                                style: customStyleMap,));
-                              break;
-                            case 2:
-                              items.add(Html(
-                                data: "<h2>${element.data!.text!}</h2>",
-                                style: customStyleMap,));
-                              break;
-                            case 3:
-                              items.add(Html(
-                                data: "<h3>${element.data!.text!}</h3>",
-                                style: customStyleMap,));
-                              break;
-                            case 4:
-                              items.add(Html(
-                                data: "<h4>${element.data!.text!}</h4>",
-                                style: customStyleMap,));
-                              break;
-                            case 5:
-                              items.add(Html(
-                                data: "<h5>${element.data!.text!}</h5>",
-                                style: customStyleMap,));
-                              break;
-                            case 6:
-                              items.add(Html(
-                                data: "<h6>${element.data!.text!}</h6>",
-                                style: customStyleMap,));
-                              break;
-                          }
+                          items.add(Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              element.data!.text!,
+                              style:
+                                  customTextStyleMap["h${element.data!.level}"],
+                            ),
+                          ));
                         }
                       }
                     }
@@ -145,9 +131,13 @@ class EditorJSViewState extends State<EditorJSView> {
                 }
                 break;
               case "paragraph":
-                items.add(Html(
-                  data: "<p>${element.data!.text}</p>",
-                  style: customStyleMap,
+                items.add(RichText(
+                  text: TextSpan(
+                    // Note: Styles for TextSpans must be explicitly defined.
+                    // Child text spans will inherit styles from parent
+                    style: customTextStyleMap["p"],
+                    children: processHtmlTags(element.data!.text!),
+                  ),
                 ));
                 break;
               case "list":
@@ -156,45 +146,16 @@ class EditorJSViewState extends State<EditorJSView> {
                 int counter = 1;
                 String listString = "";
                 element.data!.items!.forEach((element) {
-                  listString += "<li>$element</li>";
+                  if (style == 'ordered') {
+                    listString += "$counter. $element\n";
+                  }else{
+                    listString += "$bullet $element\n";
+                  }
+                  counter++;
                 });
-                if (style == 'ordered'){
-                  items.add(Html(data: "<ol>$listString</ol>", style: customStyleMap,));
-                }else{
-                  items.add(Html(data: "<ul>$listString</ul>", style: customStyleMap,));
-                }
-                // element.data!.items!.forEach(
-                //   (element) {
-                //     if (style == 'ordered') {
-                //       bullet = counter.toString();
-                //       items.add(
-                //         Row(children: [
-                //           Expanded(
-                //             child: Container(
-                //                 child: Html(
-                //               data: "<li>$bullet. $element</li>",
-                //               style: customStyleMap,
-                //             )),
-                //           )
-                //         ]),
-                //       );
-                //       counter++;
-                //     } else {
-                //       items.add(
-                //         Row(
-                //           children: <Widget>[
-                //             Expanded(
-                //                 child: Container(
-                //               child: Html(
-                //                   data: "<li>$bullet$element</li>",
-                //                   style: customStyleMap),
-                //             ))
-                //           ],
-                //         ),
-                //       );
-                //     }
-                //   },
-                // );
+            items.add(Align(
+                alignment: Alignment.centerLeft,
+                child: Text(listString,style: style == 'ordered' ? customTextStyleMap["ol"] : customTextStyleMap["ul"],)));
                 break;
               case "delimiter":
                 items.add(Row(
@@ -213,6 +174,7 @@ class EditorJSViewState extends State<EditorJSView> {
                           EditorJSOrangeButton(
                             text: element.data!.buttonText!,
                             onPressed: () {
+                              log("buttonPressed!!");
                               widget.onButtonAction!(element.data, context);
                             },
                             buttonType: element.data!.buttonType!,
@@ -281,26 +243,28 @@ class EditorJSViewState extends State<EditorJSView> {
                     (element.color != null) ? getColor(element.color!) : null,
                 padding: (element.padding != null)
                     ? EdgeInsets.all(element.padding!)
-                    : null)
-        );
+                    : null));
       },
     );
 
     return map;
   }
-  Map<String, TextStyle> generateTextStylemap(List<EditorJSCSSTag> styles){
+
+  Map<String, TextStyle> generateTextStylemap(List<EditorJSCSSTag> styles) {
     Map<String, TextStyle> map = <String, TextStyle>{};
     styles.forEach(
-          (element) {
+      (element) {
         map.putIfAbsent(
-            element.tag.toString(),
-                () =>  GoogleFonts.getFont(element.fontFamily ?? "Rubik",
-                backgroundColor: (element.backgroundColor != null)
-                    ? getColor(element.backgroundColor!)
-                    : null,
-                color:
-                (element.color != null) ? getColor(element.color!) : null,
-                )
+          element.tag.toString(),
+          () => GoogleFonts.getFont(
+            element.fontFamily ?? "Rubik",
+            backgroundColor: (element.backgroundColor != null)
+                ? getColor(element.backgroundColor!)
+                : null,
+            color: (element.color != null) ? getColor(element.color!) : null,
+            fontSize: convertFontSize(element.fontSize),
+            fontWeight: convertFontWeight(element.fontWeight),
+          ),
         );
       },
     );
@@ -308,6 +272,85 @@ class EditorJSViewState extends State<EditorJSView> {
     return map;
   }
 
+  double convertFontSize(String? fontSize) {
+    if (fontSize == null) return 14;
+    if (fontSize.contains("px")) {
+      String sizeString = fontSize.substring(0, fontSize.length - 2);
+      return double.parse(sizeString);
+    } else if (fontSize.contains("em")) {
+      String sizeString = fontSize.substring(0, fontSize.length - 2);
+      return double.parse(sizeString) * 16;
+    } else if (fontSize.contains("%")) {
+      String sizeString = fontSize.substring(0, fontSize.length - 1);
+      return double.parse(sizeString) * 16;
+    }
+    return 14;
+  }
+
+  FontWeight convertFontWeight(int? fontWeight) {
+    if (fontWeight == 100) return FontWeight.w100;
+    if (fontWeight == 200) return FontWeight.w200;
+    if (fontWeight == 300) return FontWeight.w300;
+    if (fontWeight == 400) return FontWeight.w400;
+    if (fontWeight == 500) return FontWeight.w500;
+    if (fontWeight == 600) return FontWeight.w600;
+    if (fontWeight == 700) return FontWeight.w700;
+    if (fontWeight == 800) return FontWeight.w800;
+    if (fontWeight == 900) return FontWeight.w900;
+    return FontWeight.w400;
+  }
+  List<TextSpan> processHtmlTags(String htmlString) {
+    List<TextSpan> textSpans = [];
+
+    dom.Document document = htmlParser.parse(htmlString);
+
+    void parseNode(dom.Node node, TextStyle style) {
+      if (node is dom.Text) {
+        textSpans.add(TextSpan(text: node.text, style: style));
+      } else if (node is dom.Element) {
+        TextStyle newStyle = style;
+
+        if (node.localName == 'b') {
+          newStyle = newStyle.copyWith(fontWeight: FontWeight.bold);
+        } else if (node.localName == 'i') {
+          newStyle = newStyle.copyWith(fontStyle: FontStyle.italic);
+        } else if (node.localName == 'a') {
+          String? href = node.attributes['href'];
+          if (href != null && href.isNotEmpty) {
+            textSpans.add(
+              TextSpan(
+                text: node.text,
+                style: newStyle.copyWith(
+                  decoration: TextDecoration.underline,
+                  color: Colors.blue, // Customize the link color here
+                ),
+                recognizer: TapGestureRecognizer()
+                  ..onTap = () {
+                  log("HIT URL");
+                    launchUrl(Uri.parse(href));
+                  },
+              ),
+            );
+          } else {
+            newStyle = newStyle.copyWith(
+              decoration: TextDecoration.underline,
+              color: Colors.blue, // Customize the link color here
+            );
+          }
+        }
+
+        for (var childNode in node.nodes) {
+          parseNode(childNode, newStyle);
+        }
+      }
+    }
+
+    for (var node in document.body!.nodes) {
+      parseNode(node, TextStyle());
+    }
+
+    return textSpans;
+  }
   Color getColor(String hexColor) {
     final hexCode = hexColor.replaceAll('#', '');
     return Color(int.parse('$hexCode', radix: 16));
@@ -318,3 +361,5 @@ class EditorJSViewState extends State<EditorJSView> {
     return Column(children: items);
   }
 }
+
+

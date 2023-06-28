@@ -56,7 +56,7 @@ class EditorJSOrangeButton extends StatelessWidget {
           ),
           Text(
             text,
-            style: AppFonts.Body,
+            style: AppFonts.Heading3.copyWith(color: Colors.white),
           ),
         ],
       ),
