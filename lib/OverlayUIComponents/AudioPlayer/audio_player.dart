@@ -103,7 +103,7 @@ class _OverlayAudioPlayerState extends State<OverlayAudioPlayer> {
             const SizedBox(width: 10.0),
             Text(
               widget.audioTitle,
-              style: AppStyles.rubikBodyText,
+              style: AppFonts.Body,
             ),
           ],
         ),
@@ -217,11 +217,11 @@ class _OverlayAudioPlayerState extends State<OverlayAudioPlayer> {
         text: TextSpan(children: [
       TextSpan(
         text: formattedPosition,
-        style: AppStyles.rubikAudioPlayerBold,
+        style: AppFonts.Heading3,
       ),
       TextSpan(
         text: ' / $formattedDuration',
-        style: AppStyles.rubikAudioPlayerNormal,
+        style: AppFonts.Heading3,
       )
     ]));
   }
