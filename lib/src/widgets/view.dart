@@ -327,7 +327,7 @@ class EditorJSViewState extends State<EditorJSView> {
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
                   log("HIT URL");
-                    launchUrl(Uri.parse(href));
+                    launchUrl(Uri.parse(href) , mode: LaunchMode.externalApplication);
                   },
               ),
             );
