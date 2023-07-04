@@ -81,8 +81,8 @@ class EditorJSViewState extends State<EditorJSView> {
         customStyleMap = generateStylemap(styles.cssTags!);
         customTextStyleMap = generateTextStylemap(styles.cssTags!);
 
-        log("STYLES: " + customStyleMap.toString());
-        log("TEXTSTYLES: " + customTextStyleMap.toString());
+        // log("STYLES: " + customStyleMap.toString());
+        // log("TEXTSTYLES: " + customTextStyleMap.toString());
 
         dataObject.blocks!.forEach(
           (element) {
