@@ -119,7 +119,7 @@ class EditorJSViewState extends State<EditorJSView> {
                           items.add(Align(
                             alignment: Alignment.centerLeft,
                             child: Text(
-                              element.data!.text!,
+                              filterText(element.data!.text!),
                               style:
                                   customTextStyleMap["h${element.data!.level}"],
                             ),
@@ -136,7 +136,7 @@ class EditorJSViewState extends State<EditorJSView> {
                     // Note: Styles for TextSpans must be explicitly defined.
                     // Child text spans will inherit styles from parent
                     style: customTextStyleMap["p"],
-                    children: processHtmlTags(element.data!.text!),
+                    children: processHtmlTags(filterText(element.data!.text!)),
                   ),
                 ));
                 break;
@@ -155,7 +155,7 @@ class EditorJSViewState extends State<EditorJSView> {
                 });
             items.add(Align(
                 alignment: Alignment.centerLeft,
-                child: Text(listString,style: style == 'ordered' ? customTextStyleMap["ol"] : customTextStyleMap["ul"],)));
+                child: Text(filterText(listString),style: style == 'ordered' ? customTextStyleMap["ol"] : customTextStyleMap["ul"],)));
                 break;
               case "delimiter":
                 items.add(Row(
@@ -226,6 +226,11 @@ class EditorJSViewState extends State<EditorJSView> {
         );
       },
     );
+  }
+  String filterText(String input){
+    String filteredString=input;
+    filteredString= filteredString.replaceAll("&nbsp;", " ");
+    return filteredString;
   }
 
   Map<String, Style> generateStylemap(List<EditorJSCSSTag> styles) {
