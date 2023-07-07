@@ -19,7 +19,6 @@ import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 
-
 import '../../OverlayUIComponents/VideoPlayer/video_player.dart';
 
 typedef EditorJSButtonCallback = void Function(
@@ -131,14 +130,17 @@ class EditorJSViewState extends State<EditorJSView> {
                 }
                 break;
               case "paragraph":
-                items.add(RichText(
-                  text: TextSpan(
-                    // Note: Styles for TextSpans must be explicitly defined.
-                    // Child text spans will inherit styles from parent
-                    style: customTextStyleMap["p"],
-                    children: processHtmlTags(filterText(element.data!.text!)),
-                  ),
-                ));
+                items.add(Align(
+                    alignment: Alignment.centerLeft,
+                    child: RichText(
+                      text: TextSpan(
+                        // Note: Styles for TextSpans must be explicitly defined.
+                        // Child text spans will inherit styles from parent
+                        style: customTextStyleMap["p"],
+                        children:
+                            processHtmlTags(filterText(element.data!.text!)),
+                      ),
+                    )));
                 break;
               case "list":
                 String bullet = "\u2022 ";
@@ -148,14 +150,19 @@ class EditorJSViewState extends State<EditorJSView> {
                 element.data!.items!.forEach((element) {
                   if (style == 'ordered') {
                     listString += "$counter. $element\n";
-                  }else{
+                  } else {
                     listString += "$bullet $element\n";
                   }
                   counter++;
                 });
-            items.add(Align(
-                alignment: Alignment.centerLeft,
-                child: Text(filterText(listString),style: style == 'ordered' ? customTextStyleMap["ol"] : customTextStyleMap["ul"],)));
+                items.add(Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      filterText(listString),
+                      style: style == 'ordered'
+                          ? customTextStyleMap["ol"]
+                          : customTextStyleMap["ul"],
+                    )));
                 break;
               case "delimiter":
                 items.add(Row(
@@ -227,9 +234,10 @@ class EditorJSViewState extends State<EditorJSView> {
       },
     );
   }
-  String filterText(String input){
-    String filteredString=input;
-    filteredString= filteredString.replaceAll("&nbsp;", " ");
+
+  String filterText(String input) {
+    String filteredString = input;
+    filteredString = filteredString.replaceAll("&nbsp;", " ");
     return filteredString;
   }
 
@@ -304,6 +312,7 @@ class EditorJSViewState extends State<EditorJSView> {
     if (fontWeight == 900) return FontWeight.w900;
     return FontWeight.w400;
   }
+
   List<TextSpan> processHtmlTags(String htmlString) {
     List<TextSpan> textSpans = [];
 
@@ -331,8 +340,9 @@ class EditorJSViewState extends State<EditorJSView> {
                 ),
                 recognizer: TapGestureRecognizer()
                   ..onTap = () {
-                  log("HIT URL");
-                    launchUrl(Uri.parse(href) , mode: LaunchMode.externalApplication);
+                    log("HIT URL");
+                    launchUrl(Uri.parse(href),
+                        mode: LaunchMode.externalApplication);
                   },
               ),
             );
@@ -356,6 +366,7 @@ class EditorJSViewState extends State<EditorJSView> {
 
     return textSpans;
   }
+
   Color getColor(String hexColor) {
     final hexCode = hexColor.replaceAll('#', '');
     return Color(int.parse('$hexCode', radix: 16));
@@ -366,5 +377,3 @@ class EditorJSViewState extends State<EditorJSView> {
     return Column(children: items);
   }
 }
-
-
