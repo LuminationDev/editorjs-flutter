@@ -16,6 +16,8 @@ dependencies:
   just_audio: 0.9.32
   url_launcher: 6.1.11
   google_fonts: 4.0.4
+  webview_flutter: ^2.8.0
+  flutter_inappwebview: ^5.7.2+3
 
 dev_dependencies:
   flutter_test:
