@@ -236,6 +236,20 @@ class EditorJSViewState extends State<EditorJSView> {
                       maxHeight: 200
                     ),
                     child: WebView(
+                      javascriptChannels: Set.from([
+                        JavascriptChannel(
+                            name: 'API',
+                            onMessageReceived: (JavascriptMessage message) {
+                              if (message.message.startsWith("Button")) {
+                                log("integrations buttonPressed!!");
+                                String ButtonType = message.message.substring(message.message.indexOf(".",message.message.indexOf(".") )+1, message.message.indexOf("["));
+                                String ButtonUrl = message.message.substring(message.message.indexOf("[")+1,message.message.lastIndexOf("]"));
+                                EditorJSBlockData blockData = EditorJSBlockData(buttonType: ButtonType, buttonAction: ButtonUrl);
+                                widget.onButtonAction!(blockData, context);
+                              }
+                              print(message.message);
+                            })
+                      ]),
                       initialUrl:  Uri.dataFromString(element.data!.text!, mimeType: "text/html").toString() ,
                       javascriptMode: JavascriptMode.unrestricted,
                     )
