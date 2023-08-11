@@ -33,6 +33,9 @@ class EditorJSOrangeButton extends StatelessWidget {
       case ('externaldeeplink'):
         buttonIcon = Icon(Icons.arrow_outward);
         break;
+      case ('integration'):
+        buttonIcon = Icon(Icons.cable_rounded);
+        break;
       default:
         buttonIcon = Icon(Icons.question_mark);
         break;
