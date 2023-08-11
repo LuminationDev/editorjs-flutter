@@ -22,7 +22,7 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../OverlayUIComponents/VideoPlayer/video_player.dart';
 
 typedef EditorJSButtonCallback = void Function(
-    EditorJSBlockData? buttonAction, BuildContext context);
+    EditorJSBlockData? buttonData, BuildContext context);
 
 class EditorJSView extends StatefulWidget {
   // isPreview is used to conditionally add padding at the bottom of the EditorJSView column (we don't want it in preview mode)
@@ -175,8 +175,12 @@ class EditorJSViewState extends State<EditorJSView> {
               case "button":
                 if (element.data != null) {
                   if (element.data!.buttonText != null) {
-                    if (element.data!.buttonAction != null) {
-                      if (element.data!.buttonType != null) {
+                    if (element.data!.buttonType != null) {
+                      // Either we have a buttonAction, or we have integration data if buttonAction is null
+                      if (element.data!.buttonAction != null ||
+                          (element.data!.buttonAction == null &&
+                              element.data!.integration != null &&
+                              element.data!.integrationData != null)) {
                         items.add(
                           EditorJSOrangeButton(
                             text: element.data!.buttonText!,

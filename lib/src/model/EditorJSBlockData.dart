@@ -15,6 +15,8 @@ class EditorJSBlockData {
   final String? buttonType;
   final String? buttonText;
   final String? buttonAction;
+  final String? integration;
+  final Map<String, dynamic>? integrationData;
   final String? title;
 
   EditorJSBlockData({
@@ -30,6 +32,8 @@ class EditorJSBlockData {
     this.buttonType,
     this.buttonText,
     this.buttonAction,
+    this.integration,
+    this.integrationData,
     this.title,
   });
 
@@ -49,14 +53,28 @@ class EditorJSBlockData {
       style: parsedJson['style'] is String ? parsedJson['style'] : null,
       items: itemsList.isNotEmpty ? itemsList : null,
       file: (parsedJson['file'] is Map<String, dynamic>)
-          ? EditorJSBlockFile.fromJson(parsedJson['file'] as Map<String, dynamic>)
+          ? EditorJSBlockFile.fromJson(
+              parsedJson['file'] as Map<String, dynamic>)
           : null,
       caption: parsedJson['caption'] is String ? parsedJson['caption'] : null,
-      withBorder: parsedJson['withBorder'] is bool ? parsedJson['withBorder'] : null,
-      withBackground: parsedJson['withBackground'] is bool ? parsedJson['withBackground'] : null,
-      buttonType: parsedJson['buttonType'] is String ? parsedJson['buttonType'] : null,
-      buttonText: parsedJson['buttonText'] is String ? parsedJson['buttonText'] : null,
-      buttonAction: parsedJson['buttonAction'] is String ? parsedJson['buttonAction'] : null,
+      withBorder:
+          parsedJson['withBorder'] is bool ? parsedJson['withBorder'] : null,
+      withBackground: parsedJson['withBackground'] is bool
+          ? parsedJson['withBackground']
+          : null,
+      buttonType:
+          parsedJson['buttonType'] is String ? parsedJson['buttonType'] : null,
+      buttonText:
+          parsedJson['buttonText'] is String ? parsedJson['buttonText'] : null,
+      buttonAction: parsedJson['buttonAction'] is String
+          ? parsedJson['buttonAction']
+          : null,
+      integration: parsedJson['integration'] is String
+          ? parsedJson['integration']
+          : null,
+      integrationData: parsedJson['integrationData'] is Map<String, dynamic>
+          ? parsedJson['integrationData']
+          : null,
       title: parsedJson['title'] is String ? parsedJson['title'] : null,
     );
   }
