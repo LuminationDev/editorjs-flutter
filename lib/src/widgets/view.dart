@@ -43,7 +43,7 @@ class EditorJSView extends StatefulWidget {
   final EditorJSButton editorJSButton;
   final EditorJSVideoPlayer editorJSVideoPlayer;
   final EditorJSAudioPlayer editorJSAudioPlayer;
-  final EditorJSButtonCallback? onButtonAction;
+  final EditorJSButtonCallback onButtonAction;
   final String? editorJSData;
   final String? styles;
 
@@ -55,7 +55,7 @@ class EditorJSView extends StatefulWidget {
     required this.editorJSVideoPlayer,
     required this.editorJSAudioPlayer,
     required this.editorJSButton,
-    this.onButtonAction,
+    required this.onButtonAction,
   }) : super(key: key);
 
   @override
