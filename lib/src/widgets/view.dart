@@ -1,7 +1,4 @@
 import 'dart:convert';
-import 'dart:ffi';
-
-import 'package:editorjs_flutter/OverlayUIComponents/AudioPlayer/audio_player.dart';
 import 'package:editorjs_flutter/src/model/EditorJSBlockData.dart';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
@@ -12,32 +9,54 @@ import 'package:flutter_html/flutter_html.dart';
 
 import 'dart:developer';
 
-import 'package:editorjs_flutter/OverlayUIComponents/orange_button.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
 
-import '../../OverlayUIComponents/VideoPlayer/video_player.dart';
+typedef EditorJSButtonCallback = void Function({
+  required EditorJSBlockData? buttonData,
+  required BuildContext context,
+});
 
-typedef EditorJSButtonCallback = void Function(
-    EditorJSBlockData? buttonData, BuildContext context);
+typedef EditorJSButton = Widget Function({
+  required String text,
+  required Function onPressed,
+  required String buttonType,
+});
+
+typedef EditorJSAudioPlayer = Widget Function({
+  required String audioFirebaseStoragePath,
+  required String audioTitle,
+  required Function pauseOtherAudioPlayers,
+});
+
+typedef EditorJSVideoPlayer = Widget Function({
+  required String videoFirebaseStoragePath,
+  required String videoTitle,
+});
 
 class EditorJSView extends StatefulWidget {
   // isPreview is used to conditionally add padding at the bottom of the EditorJSView column (we don't want it in preview mode)
   final bool isPreview;
-  final EditorJSButtonCallback? onButtonAction;
+  final EditorJSButton editorJSButton;
+  final EditorJSVideoPlayer editorJSVideoPlayer;
+  final EditorJSAudioPlayer editorJSAudioPlayer;
+  final EditorJSButtonCallback onButtonAction;
   final String? editorJSData;
   final String? styles;
 
-  const EditorJSView(
-      {Key? key,
-      required this.isPreview,
-      this.editorJSData,
-      this.styles,
-      this.onButtonAction})
-      : super(key: key);
+  const EditorJSView({
+    Key? key,
+    required this.isPreview,
+    this.editorJSData,
+    this.styles,
+    required this.editorJSVideoPlayer,
+    required this.editorJSAudioPlayer,
+    required this.editorJSButton,
+    required this.onButtonAction,
+  }) : super(key: key);
 
   @override
   EditorJSViewState createState() => EditorJSViewState();
@@ -182,11 +201,14 @@ class EditorJSViewState extends State<EditorJSView> {
                               element.data!.integration != null &&
                               element.data!.integrationData != null)) {
                         items.add(
-                          EditorJSOrangeButton(
+                          widget.editorJSButton(
                             text: element.data!.buttonText!,
                             onPressed: () {
                               log("buttonPressed!!");
-                              widget.onButtonAction!(element.data, context);
+                              widget.onButtonAction!(
+                                buttonData: element.data,
+                                context: context,
+                              );
                             },
                             buttonType: element.data!.buttonType!,
                           ),
@@ -202,7 +224,7 @@ class EditorJSViewState extends State<EditorJSView> {
                     if (element.data!.file!.url != null) {
                       if (element.data!.title != null) {
                         items.add(
-                          OverlayAudioPlayer(
+                          widget.editorJSAudioPlayer(
                             audioFirebaseStoragePath: element.data!.file!.url!,
                             audioTitle: element.data!.title!,
                             pauseOtherAudioPlayers: pauseOtherAudioPlayers,
@@ -219,7 +241,7 @@ class EditorJSViewState extends State<EditorJSView> {
                     if (element.data!.file!.url != null) {
                       if (element.data!.title != null) {
                         items.add(
-                          OverlayVideoPlayer(
+                          widget.editorJSVideoPlayer(
                             videoFirebaseStoragePath: element.data!.file!.url!,
                             videoTitle: element.data!.title!,
                           ),
