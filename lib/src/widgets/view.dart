@@ -18,6 +18,7 @@ import 'package:just_audio/just_audio.dart';
 import 'package:html/parser.dart' as htmlParser;
 import 'package:html/dom.dart' as dom;
 import 'package:url_launcher/url_launcher.dart';
+import 'package:webview_flutter/webview_flutter.dart';
 
 import '../../OverlayUIComponents/VideoPlayer/video_player.dart';
 
@@ -82,6 +83,8 @@ class EditorJSViewState extends State<EditorJSView> {
 
         // log("STYLES: " + customStyleMap.toString());
         // log("TEXTSTYLES: " + customTextStyleMap.toString());
+
+        log('blocks: ${dataObject.blocks![0].type}');
 
         dataObject.blocks!.forEach(
           (element) {
@@ -229,6 +232,35 @@ class EditorJSViewState extends State<EditorJSView> {
                   }
                 }
                 break;
+                case "integration":
+                  log('integration');
+                  items.add(ConstrainedBox(
+                    constraints: BoxConstraints(
+                      minHeight: 20,
+                      maxHeight: 200
+                    ),
+                    child: WebView(
+                      javascriptChannels: Set.from([
+                        JavascriptChannel(
+                            name: 'API',
+                            onMessageReceived: (JavascriptMessage message) {
+                              if (message.message.startsWith("Button")) {
+                                log("integrations buttonPressed!!");
+                                String ButtonType = message.message.substring(message.message.indexOf(".",message.message.indexOf(".") )+1, message.message.indexOf("["));
+                                String ButtonUrl = message.message.substring(message.message.indexOf("[")+1,message.message.lastIndexOf("]"));
+                                EditorJSBlockData blockData = EditorJSBlockData(buttonType: ButtonType, buttonAction: ButtonUrl);
+                                widget.onButtonAction!(blockData, context);
+                              }
+                              print(message.message);
+                            })
+                      ]),
+                      initialUrl:  Uri.dataFromString(element.data!.text!, mimeType: "text/html").toString() ,
+                      javascriptMode: JavascriptMode.unrestricted,
+                    )
+
+
+
+                  ));
             }
             if (!widget.isPreview) {
               items.add(const SizedBox(height: 10));
